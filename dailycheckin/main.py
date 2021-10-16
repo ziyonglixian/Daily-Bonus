@@ -125,9 +125,9 @@ def checkin():
         content_list.append(
             f"开始时间: {utc_time}\n"
             f"任务用时: {int(time.time() - start_time)} 秒\n"
-            f"当前版本: {__version__}\n"
+            f"当前版本（dailycheckin）: {__version__}\n"
             f"最新版本: {latest_version}\n"
-            f"项目地址: https://github.com/Sitoi/dailycheckin"
+            f"签到项目地址: https://github.com/jckling/Daily-Bonus"
         )
         push_message(content_list=content_list, notice_info=notice_info)
         return

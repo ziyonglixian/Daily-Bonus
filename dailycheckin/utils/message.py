@@ -159,19 +159,6 @@ def message2pushplus(pushplus_token, content, pushplus_topic=None):
     return
 
 
-def important_notice():
-    datas = requests.get(url="https://api.github.com/repos/Sitoi/dailycheckin/issues?state=open&labels=通知").json()
-    if datas:
-        data = datas[0]
-        title = data.get("title")
-        body = data.get("body")
-        url = data.get("html_url")
-        notice = f"{title}\n{body}\n详细地址: {url}"
-    else:
-        notice = None
-    return notice
-
-
 def push_message(content_list: list, notice_info: dict):
     dingtalk_secret = notice_info.get("dingtalk_secret")
     dingtalk_access_token = notice_info.get("dingtalk_access_token")
@@ -200,13 +187,6 @@ def push_message(content_list: list, notice_info: dict):
     merge_push = notice_info.get("merge_push")
     content_str = "\n————————————\n\n".join(content_list)
     message_list = [content_str]
-    try:
-        notice = important_notice()
-        if notice:
-            message_list.append(notice)
-            content_list.append(notice)
-    except Exception as e:
-        print("获取重要通知失败:", e)
     if merge_push is None:
         if qmsg_key or coolpushskey or qywx_touser or qywx_corpsecret or qywx_agentid or bark_url or pushplus_token:
             merge_push = False
@@ -294,4 +274,4 @@ def push_message(content_list: list, notice_info: dict):
 
 
 if __name__ == "__main__":
-    print(important_notice())
+    pass

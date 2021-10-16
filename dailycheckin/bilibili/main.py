@@ -43,7 +43,7 @@ class BiliBili(CheckIn):
             if ret["code"] == 0:
                 msg = f'签到成功，{ret["data"]["text"]}，特别信息:{ret["data"]["specialText"]}，本月已签到{ret["data"]["hadSignDays"]}天'
             elif ret["code"] == 1011040:
-                msg = "今日已签到过,无法重复签到"
+                msg = "今日已签到，无法重复签到"
             else:
                 msg = f'签到失败，信息为: {ret["message"]}'
         except Exception as e:
@@ -281,24 +281,24 @@ class BiliBili(CheckIn):
                         break
                     if coin_num <= 0:
                         break
-                coin_msg = f"今日成功投币{success_count + coins_av_count}/{self.check_item.get('coin_num', 5)}个"
+                coin_msg = f"今日成功投币 {success_count + coins_av_count}/{self.check_item.get('coin_num', 5)} 个"
             else:
-                coin_msg = f"今日成功投币{coins_av_count}/{self.check_item.get('coin_num', 5)}个"
-            aid = aid_list[0].get("aid")
-            cid = aid_list[0].get("cid")
-            title = aid_list[0].get("title")
-            report_ret = self.report_task(session=session, bili_jct=bili_jct, aid=aid, cid=cid)
-            if report_ret.get("code") == 0:
-                report_msg = f"观看《{title}》300秒"
-            else:
-                report_msg = f"任务失败"
-                print(report_msg)
-            share_ret = self.share_task(session=session, bili_jct=bili_jct, aid=aid)
-            if share_ret.get("code") == 0:
-                share_msg = f"分享《{title}》成功"
-            else:
-                share_msg = f"分享失败"
-                print(share_msg)
+                coin_msg = f"今日成功投币 {coins_av_count}/{self.check_item.get('coin_num', 5)} 个"
+            # aid = aid_list[0].get("aid")
+            # cid = aid_list[0].get("cid")
+            # title = aid_list[0].get("title")
+            # report_ret = self.report_task(session=session, bili_jct=bili_jct, aid=aid, cid=cid)
+            # if report_ret.get("code") == 0:
+            #     report_msg = f"观看《{title}》300秒"
+            # else:
+            #     report_msg = f"任务失败"
+            #     print(report_msg)
+            # share_ret = self.share_task(session=session, bili_jct=bili_jct, aid=aid)
+            # if share_ret.get("code") == 0:
+            #     share_msg = f"分享《{title}》成功"
+            # else:
+            #     share_msg = f"分享失败"
+            #     print(share_msg)
             live_stats = self.live_status(session=session)
             uname, uid, is_login, new_coin, vip_type, new_current_exp = self.get_nav(session=session)
             reward_ret = self.reward(session=session)
@@ -314,12 +314,12 @@ class BiliBili(CheckIn):
                       {"name": "漫画签到", "value": manhua_msg},
                       {"name": "直播签到", "value": live_msg},
                       {"name": "登陆任务", "value": "今日已登陆"},
-                      {"name": "观看视频", "value": report_msg},
-                      {"name": "分享任务", "value": share_msg},
+                      # {"name": "观看视频", "value": report_msg},
+                      # {"name": "分享任务", "value": share_msg},
                       {"name": "投币任务", "value": coin_msg},
                       {"name": "今日经验", "value": today_exp},
                       {"name": "当前经验", "value": new_current_exp},
-                      {"name": "升级还需", "value": f"{update_data}天"},
+                      {"name": "升级还需", "value": f"{update_data} 天"},
                   ] + live_stats
             msg = "\n".join([f"{one.get('name')}: {one.get('value')}" for one in msg])
             return msg

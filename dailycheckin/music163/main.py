@@ -86,7 +86,7 @@ class Music163(CheckIn):
         if ret["code"] == 200:
             return "签到成功，经验+ " + str(ret["point"])
         elif ret["code"] == -2:
-            return "今天已经签到过了"
+            return "今日已签到"
         else:
             return "签到失败: " + ret["message"]
 
