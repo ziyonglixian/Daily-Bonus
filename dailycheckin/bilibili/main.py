@@ -63,7 +63,7 @@ class BiliBili(CheckIn):
             if ret["code"] == 0:
                 msg = "签到成功"
             elif ret["msg"] == "clockin clockin is duplicate":
-                msg = "今天已经签到过了"
+                msg = "今日已签到"
             else:
                 msg = f'签到失败，信息为({ret["msg"]})'
                 print(msg)
@@ -313,7 +313,7 @@ class BiliBili(CheckIn):
                       {"name": "帐号信息", "value": uname},
                       {"name": "漫画签到", "value": manhua_msg},
                       {"name": "直播签到", "value": live_msg},
-                      {"name": "登陆任务", "value": "今日已登陆"},
+                      # {"name": "登录任务", "value": "今日已登录"},
                       # {"name": "观看视频", "value": report_msg},
                       # {"name": "分享任务", "value": share_msg},
                       {"name": "投币任务", "value": coin_msg},
