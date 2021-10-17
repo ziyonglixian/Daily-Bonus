@@ -41,13 +41,13 @@ class BiliBili(CheckIn):
             url = "https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign"
             ret = session.get(url=url).json()
             if ret["code"] == 0:
-                msg = f'签到成功，{ret["data"]["text"]}，特别信息:{ret["data"]["specialText"]}，本月已签到{ret["data"]["hadSignDays"]}天'
+                msg = f'签到成功，{ret["data"]["text"]}，特别信息：{ret["data"]["specialText"]}，本月已签到 {ret["data"]["hadSignDays"]} 天'
             elif ret["code"] == 1011040:
                 msg = "今日已签到，无法重复签到"
             else:
-                msg = f'签到失败，信息为: {ret["message"]}'
+                msg = f'签到失败，信息为：{ret["message"]}'
         except Exception as e:
-            msg = f"签到异常，原因为{str(e)}"
+            msg = f"签到异常，原因为：{str(e)}"
             print(msg)
         return msg
 
@@ -65,10 +65,10 @@ class BiliBili(CheckIn):
             elif ret["msg"] == "clockin clockin is duplicate":
                 msg = "今日已签到"
             else:
-                msg = f'签到失败，信息为({ret["msg"]})'
+                msg = f'签到失败，信息为：{ret["msg"]}'
                 print(msg)
         except Exception as e:
-            msg = f"签到异常,原因为: {str(e)}"
+            msg = f"签到异常,原因为：{str(e)}"
             print(msg)
         return msg
 
@@ -270,14 +270,14 @@ class BiliBili(CheckIn):
                     ret = self.coin_add(session=session, aid=aid.get("aid"), bili_jct=bili_jct)
                     if ret["code"] == 0:
                         coin_num -= 1
-                        print(f'成功给{aid.get("title")}投一个币')
+                        print(f'成功给 {aid.get("title")} 投一个币')
                         success_count += 1
                     elif ret["code"] == 34005:
-                        print(f'投币{aid.get("title")}失败，原因为{ret["message"]}')
+                        print(f'投币 {aid.get("title")} 失败，原因为 {ret["message"]}')
                         continue
                         # -104 硬币不够了 -111 csrf 失败 34005 投币达到上限
                     else:
-                        print(f'投币{aid.get("title")}失败，原因为{ret["message"]}，跳过投币')
+                        print(f'投币 {aid.get("title")} 失败，原因为 {ret["message"]}，跳过投币')
                         break
                     if coin_num <= 0:
                         break

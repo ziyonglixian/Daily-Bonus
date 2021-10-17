@@ -24,10 +24,10 @@ class Tieba(CheckIn):
         try:
             content = session.get(url="http://tieba.baidu.com/dc/common/tbs")
         except Exception as e:
-            return False, f"登录验证异常,错误信息: {e}"
+            return False, f"登录验证异常，错误信息: {e}"
         data = json.loads(content.text)
         if data["is_login"] == 0:
-            return False, "登录失败,cookie 异常"
+            return False, "登录失败，cookie 异常"
         tbs = data["tbs"]
         user_name = self.login_info(session=session)["userName"]
         return tbs, user_name

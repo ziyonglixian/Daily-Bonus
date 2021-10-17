@@ -111,15 +111,16 @@ async function handleRequest(request) {
 详见 [腾讯云函数教程](https://sitoi.gitee.io/dailycheckin/tencent-scf/)，注意安装依赖包时使用以下语句：
 
 ```bash
-pip3 install git+git://github.com/jckling/Daily-Bonus@dev -t .
+pip3 install git+git://github.com/jckling/Daily-Bonus@dev --upgrade -t .
 ```
 
 ## 示例配置（单账户）
 
 多账户配置参考[dailycheckin 示例](https://sitoi.github.io/dailycheckin/settings/#_9)，注意：
 1. 自建 TG 反向代理配置 `TG_API_HOST` 即可；否则配置代理 `TG_PROXY`
-1. 若 cookie 中包含 `"` 则需要用进行转义（`\"`）
-2. V2EX 必须配置代理 `proxy`
+   - 遇到超时问题，可以用 [飞书](https://www.feishu.cn/) 或 [Server 酱](https://sct.ftqq.com/) 替代，其他推送没用过
+2. 若 cookie 中包含 `"` 则需要用进行转义（`\"`）
+3. V2EX 必须配置代理 `proxy`
 
 ```json
 {
