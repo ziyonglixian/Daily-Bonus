@@ -8,7 +8,8 @@ name_map = {
     "PICACOMIC_ACCOUNT_LIST": "PICACOMIC",
     "TIEBA_COOKIE_LIST": "TIEBA",
     "V2EX_COOKIE_LIST": "V2EX",
-    "YAMIBO_COOKIE_LIST": "YAMIBO"
+    "YAMIBO_COOKIE_LIST": "YAMIBO",
+    "FFXIV_ACCOUNT_LIST": "FFXIV"
 }
 
 change_key_map = {
@@ -25,6 +26,8 @@ change_key_map = {
     "TIEBA_COOKIE_LIST": {"tieba_cookie": "cookie"},
     "V2EX_COOKIE_LIST": {"v2ex_cookie": "cookie", "v2ex_proxy": "proxy"},
     "YAMIBO_COOKIE_LIST": {"yamibo_cookie": "cookie"},
+    "FFXIV_ACCOUNT_LIST": {"ffxiv_username": "username", "ffxiv_password": "password", "area_name": "area_name",
+                           "server_name": "server_name", "role_name": "role_name"}
 }
 
 

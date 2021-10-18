@@ -5,6 +5,9 @@
 2. 统一签到消息格式
 3. 取消 Bilibili 观看任务、分享任务（避免影响历史记录）
 4. 添加百合会签到
+5. 添加最终幻想14积分签到
+   - [ ] 重试次数
+   - [ ] 绕过验证码
 
 |任务名称|名称|备注|
 |---|---|---|
@@ -16,6 +19,7 @@
 |TIEBA|[百度贴吧](https://tieba.baidu.com/index.html)|经验值|
 |V2EX|[V2EX](https://www.v2ex.com/)|铜币|
 |YAMIBO|[百合会论坛](https://bbs.yamibo.com/forum.php)|对象|
+|FFXIV|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|积分|
 
 ### 推送配置
 
@@ -52,23 +56,29 @@
 |Name|归属|属性|说明|
 |---|---|---|---|
 |_**BILIBILI**_.coin_num|[Bilibili](https://www.bilibili.com)|Web|Bilibili 每日投币数量|
-|_**BILIBILI**_.coin_type|[Bilibili](https://www.bilibili.com)|Web|Bilibili 投币方式 默认为 0 ；1: 为关注用户列表视频投币 0: 为随机投币。如果关注用户发布的视频不足配置的投币数，则剩余部分使用随机投币|
+|_**BILIBILI**_.coin_type|[Bilibili](https://www.bilibili.com)|Web|Bilibili 投币方式（默认为 0）1: 为关注用户列表视频投币 0: 为随机投币。如果关注用户发布的视频不足配置的投币数，则剩余部分使用随机投币|
 |_**BILIBILI**_.silver2coin|[Bilibili](https://www.bilibili.com)|Web|Bilibili 是否开启银瓜子换硬币，默认为 True 开启|
 |_**BILIBILI**_.cookie|[Bilibili](https://www.bilibili.com)|Web|Bilibili cookie|
-|_**CSDN**_.cookie|[CSDN](https://www.csdn.net/)|Web| CSDN Cookie|
-|_**MUSIC163**_.phone|[网易云音乐](https://music.163.com/)|账号|网易云音乐 帐号的手机号|
-|_**MUSIC163**_.password|[网易云音乐](https://music.163.com/)|账号|网易云音乐 帐号的密码|
+|_**CSDN**_.cookie|[CSDN](https://www.csdn.net/)|Web|CSDN cookie|
+|_**MUSIC163**_.phone|[网易云音乐](https://music.163.com/)|账号|网易云音乐 手机账号|
+|_**MUSIC163**_.password|[网易云音乐](https://music.163.com/)|账号|网易云音乐 密码|
 |_**TIEBA**_.cookie|[百度贴吧](https://tieba.baidu.com/index.html)|Web|百度贴吧 cookie|
 |_**V2EX**_.proxy|[V2EX](https://www.v2ex.com/)|Web|V2EX 代理的信息，无密码例子: http://127.0.0.1:1080 有密码例子: http://username:password@127.0.0.1:1080|
-|_**V2EX**_.cookie|[V2EX](https://www.v2ex.com/)|Web|V2EX 每日签到|
-|_**YAMIBO**_.cookie|[百合会](https://bbs.yamibo.com/forum.php)|Web|百合会账号的 cookie 信息|
+|_**V2EX**_.cookie|[V2EX](https://www.v2ex.com/)|Web|V2EX cookie|
+|_**YAMIBO**_.cookie|[百合会](https://bbs.yamibo.com/forum.php)|Web|百合会 cookie|
+|_**FFXIV**_.username|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|Web|最终幻想14 账号|
+|_**FFXIV**_.password|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|Web|最终幻想14 密码|
+|_**FFXIV**_.area_name|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|Web|最终幻想14 大区名|
+|_**FFXIV**_.server_name|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|Web|最终幻想14 服务器名|
+|_**FFXIV**_.role_name|[艾欧泽亚积分兑换平台](https://actff1.web.sdo.com/20180707Jifen/index.html#/home)|Web|最终幻想14 角色名|
+
 
 ### APP 签到配置
 
 |Name|归属|属性|说明|
 |---|---|---|:---|
 |_**ACFUN**_.phone|[AcFun](https://www.acfun.cn/)|APP|AcFun 手机账号|
-|_**ACFUN**_.password|[AcFun](https://www.acfun.cn/)|APP|AcFun 账号密码|
+|_**ACFUN**_.password|[AcFun](https://www.acfun.cn/)|APP|AcFun 密码|
 |_**PICACOMIC**_.email|[哔咔漫画](https://www.picacomic.com)|APP| 哔咔漫画 账号|
 |_**PICACOMIC**_.password|[哔咔漫画](https://www.picacomic.com)|APP| 哔咔漫画 密码|
 
@@ -173,6 +183,15 @@ pip3 install git+git://github.com/jckling/Daily-Bonus@dev --upgrade -t .
   "YAMIBO": [
     {
       "cookie": ""
+    }
+  ],
+  "FFXIV": [
+    {
+      "username": "",
+      "password": "",
+      "area_name": "陆行鸟",
+      "server_name": "",
+      "role_name": ""
     }
   ]
 }
