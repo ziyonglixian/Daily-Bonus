@@ -31,12 +31,7 @@ class Yamibo(CheckIn):
         url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + hash
         r = session.get(url)
         tree = html.fromstring(r.text)
-        if "签到成功" in r.text:
-            msg = [
-                {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
-                {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/text()')[0]}
-            ]
-        elif "已签到" in r.text:
+        if "签到成功" in r.text or "已签到" in r.text:
             msg = [
                 {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
                 {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
