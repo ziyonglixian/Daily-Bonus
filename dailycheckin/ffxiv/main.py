@@ -127,8 +127,10 @@ class Ffxiv(CheckIn):
             ipid = "1"
         elif area_name == "莫古力":
             ipid = "6"
-        else:
+        elif area_name == "猫小胖":
             ipid = "7"
+        elif area_name == "豆豆柴":
+            ipid = "8"
 
         params = {
             "method": "queryff14rolelist",
