@@ -120,7 +120,7 @@ async function handleRequest(request) {
 详见 [腾讯云函数教程](https://sitoi.gitee.io/dailycheckin/tencent-scf/)，注意安装依赖包时使用以下语句：
 
 ```bash
-pip3 install git+git://github.com/jckling/Daily-Bonus@dev --upgrade -t .
+pip3 install git+https://github.com/jckling/Daily-Bonus.git@dev --upgrade -t .
 ```
 
 ## 示例配置（单账户）
