@@ -6,7 +6,6 @@ import time
 from datetime import datetime, timedelta
 
 import requests
-
 from dailycheckin.__version__ import __version__
 from dailycheckin.configs import checkin_map, get_checkin_info, get_notice_info
 from dailycheckin.utils.format_config import format_data

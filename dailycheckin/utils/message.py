@@ -24,7 +24,7 @@ def message2server_turbo(sendkey, content):
 
 
 def message2coolpush(
-    coolpushskey, content, coolpushqq: bool = True, coolpushwx: bool = False, coolpushemail: bool = False
+        coolpushskey, content, coolpushqq: bool = True, coolpushwx: bool = False, coolpushemail: bool = False
 ):
     print("Cool Push 推送开始")
     params = {"c": content, "t": "每日签到"}

@@ -8,7 +8,6 @@ import string
 import time
 
 import requests
-
 from dailycheckin import CheckIn
 
 

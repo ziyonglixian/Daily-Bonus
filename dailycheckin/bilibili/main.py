@@ -3,9 +3,8 @@ import json
 import os
 
 import requests
-from requests import utils
-
 from dailycheckin import CheckIn
+from requests import utils
 
 
 class BiliBili(CheckIn):
@@ -68,7 +67,7 @@ class BiliBili(CheckIn):
                 msg = f'签到失败，信息为：{ret["msg"]}'
                 print(msg)
         except Exception as e:
-            msg = f"签到异常,原因为：{str(e)}"
+            msg = f"签到异常，原因为：{str(e)}"
             print(msg)
         return msg
 
@@ -116,7 +115,7 @@ class BiliBili(CheckIn):
 
     @staticmethod
     def get_followings(
-        session, uid: int, pn: int = 1, ps: int = 50, order: str = "desc", order_type: str = "attention"
+            session, uid: int, pn: int = 1, ps: int = 50, order: str = "desc", order_type: str = "attention"
     ) -> dict:
         """
         获取指定用户关注的up主
@@ -139,7 +138,7 @@ class BiliBili(CheckIn):
 
     @staticmethod
     def space_arc_search(
-        session, uid: int, pn: int = 1, ps: int = 100, tid: int = 0, order: str = "pubdate", keyword: str = ""
+            session, uid: int, pn: int = 1, ps: int = 30, tid: int = 0, order: str = "pubdate", keyword: str = ""
     ) -> dict:
         """
         获取指定up主空间视频投稿信息
@@ -153,18 +152,19 @@ class BiliBili(CheckIn):
         params = {
             "mid": uid,
             "pn": pn,
-            "ps": ps,
+            "Ps": ps,
             "tid": tid,
             "order": order,
             "keyword": keyword,
         }
         url = f"https://api.bilibili.com/x/space/arc/search"
         ret = session.get(url=url, params=params).json()
+        count = 2
         data_list = [
             {"aid": one.get("aid"), "cid": 0, "title": one.get("title"), "owner": one.get("author")}
-            for one in ret.get("data", {}).get("list", {}).get("vlist", [])
+            for one in ret.get("data", {}).get("list", {}).get("vlist", [])[:count]
         ]
-        return data_list
+        return data_list, count
 
     @staticmethod
     def elec_pay(session, bili_jct, uid: int, num: int = 50) -> dict:
@@ -234,11 +234,20 @@ class BiliBili(CheckIn):
         ]
         return data_list
 
+    @staticmethod
+    def silver2coin(session, bili_jct) -> dict:
+        """B站银瓜子换硬币"""
+        url = "https://api.live.bilibili.com/xlive/revenue/v1/wallet/silver2coin"
+        post_data = {"csrf": bili_jct}
+        ret = session.post(url=url, data=post_data).json()
+        return ret
+
     def main(self):
         bilibili_cookie = {item.split("=")[0]: item.split("=")[1] for item in self.check_item.get("cookie").split("; ")}
         bili_jct = bilibili_cookie.get("bili_jct")
         coin_num = self.check_item.get("coin_num", 0)
         coin_type = self.check_item.get("coin_type", 1)
+        silver2coin = self.check_item.get("silver2coin", False)
         session = requests.session()
         requests.utils.add_dict_to_cookiejar(session.cookies, bilibili_cookie)
         session.headers.update(
@@ -254,17 +263,27 @@ class BiliBili(CheckIn):
         if is_login:
             manhua_msg = self.manga_sign(session=session)
             live_msg = self.live_sign(session=session)
-            aid_list = self.get_region(session=session)
+            aid_list = self.get_region(session=session) if coin_type == 0 else []
             reward_ret = self.reward(session=session)
             coins_av_count = reward_ret.get("data", {}).get("coins_av") // 10
             coin_num = coin_num - coins_av_count
             coin_num = coin_num if coin_num < coin else coin
-            if coin_type == 1 and coin_num:
+            if coin_type == 1:
                 following_list = self.get_followings(session=session, uid=uid)
+                count = 0
                 for following in following_list.get("data", {}).get("list"):
                     mid = following.get("mid")
                     if mid:
-                        aid_list += self.space_arc_search(session=session, uid=mid)
+                        tmplist, tmpcount = self.space_arc_search(session=session, uid=mid)
+                        aid_list += tmplist
+                        count += tmpcount
+                        if count > coin_num:
+                            print("已获取足够关注用户的视频")
+                            break
+                else:
+                    aid_list += self.get_region(session=session)
+                for one in aid_list[::-1]:
+                    print(one)
             if coin_num > 0:
                 for aid in aid_list[::-1]:
                     ret = self.coin_add(session=session, aid=aid.get("aid"), bili_jct=bili_jct)
