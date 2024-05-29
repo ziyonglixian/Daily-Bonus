@@ -5,93 +5,116 @@
 
 import os
 
-import requests
+import cloudscraper
 from bs4 import BeautifulSoup
 from lxml import html
 
 # cookies
 COOKIES = os.environ.get("YAMIBO_COOKIES")
-SESSION = requests.Session()
 msg = []
 
 HEADERS = {
     "Host": "bbs.yamibo.com",
     "Connection": "keep-alive",
-    "Pragma": "no-cache",
-    "Cache-Control": "max-age=0",
-    "sec-ch-ua": '"Chromium";v="104", " Not A;Brand";v="99", "Google Chrome";v="104"',
+    "sec-ch-ua": '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
     "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-full-version": "123.0.6312.106",
+    "sec-ch-ua-arch": "x86",
     "sec-ch-ua-platform": "Windows",
+    "sec-ch-ua-platform-version": "15.0.0",
+    "sec-ch-ua-model": '""',
+    "sec-ch-ua-bitness": "64",
+    "sec-ch-ua-full-version-list": '"Google Chrome";v="123.0.6312.106", "Not:A-Brand";v="8.0.0.0", "Chromium";v="123.0.6312.106"',
     "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
     "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-Mode": "navigate",
     "Sec-Fetch-User": "?1",
     "Sec-Fetch-Dest": "document",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6,da;q=0.5",
-    "Referer": "https://bbs.yamibo.com/forum.php",
-    "Cookie": COOKIES
+    "Referer": "https://bbs.yamibo.com/plugin.php?id=zqlj_sign",
+    # "Accept-Encoding": "gzip, deflate, br, zstd",
+    "Accept-Language": "en,zh-CN;q=0.9,zh;q=0.8,ja;q=0.7,zh-TW;q=0.6",
+    "Cookie": COOKIES,
 }
+
+# Bypass Cloudflare
+SESSION = cloudscraper.create_scraper()
 
 
 # 登录
 def fhash():
-    url = "https://bbs.yamibo.com/forum.php"
+    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign"
     r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
     try:
-        hash = tree.xpath('//input[@name="formhash"]')[0].attrib['value']
+        hash = tree.xpath('//*[@id="scbar_form"]/input[2]')[0].attrib['value']
         return hash
     except Exception as e:
+        global msg
+        msg += [{"name": "get form fhash error", "value": e}]
         return ""
 
 
 # 签到
 def check_in():
-    url = "https://bbs.yamibo.com/plugin.php?id=study_daily_attendance:daily_attendance&fhash=" + fhash()
+    code = fhash()
+    if code == "":
+        return False
+
+    url = "https://bbs.yamibo.com/plugin.php?id=zqlj_sign&sign=" + code
     r = SESSION.get(url)
     tree = html.fromstring(r.text)
 
     global msg
-    if "签到成功" in r.text or "已签到" in r.text:
-        msg += [
-            {"name": "账户信息", "value": tree.xpath('//ul[@id="mycp1_menu"]/a/text()')[0]},
-            {"name": "签到信息", "value": tree.xpath('//div[@id="messagetext"]/p/text()')[0]}
-        ]
-    elif "登录" in r.text:
-        msg += [
-            {"name": "签到信息", "value": "登录失败，Cookie 可能已经失效"},
-        ]
+    try:
+        message = tree.xpath('//*[@id="messagetext"]/p[1]/text()')[0]
+        if "打卡成功" in message:
+            msg += [{"name": "签到信息", "value": "签到成功"}]
+        elif "打过卡" in message:
+            msg += [{"name": "签到信息", "value": "已签到"}]
+        elif "登录" in message:
+            msg += [{"name": "签到信息", "value": "登录失败，Cookie 可能已失效"}]
+            return False
+        else:
+            msg += [{"name": "签到信息", "value": message}]
+            return False
+        return True
+    except Exception as e:
+        msg += [{"name": "check_in error", "value": e}]
         return False
-    else:
-        print(r.text.encode('utf-8'))
-        msg += [
-            {"name": "签到信息", "value": "未知错误"},
-        ]
-        return False
-    return True
 
 
 # 查询
 def query_credit():
-    url = "https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit&op=base"
-    r = SESSION.get(url)
-
-    soup = BeautifulSoup(r.text, "lxml")
-    tree = html.fromstring(str(soup))
-    credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
+    # 对象信息
+    r = SESSION.get("https://bbs.yamibo.com/plugin.php?id=zqlj_sign")
+    tree = html.fromstring(r.text)
 
     global msg
-    data = [i.strip() for i in credit]
-    msg += [
-        {"name": "对象", "value": data[0]},
-        {"name": "积分", "value": data[1]},
-        {"name": "总积分", "value": data[2]},
-        {"name": "规则", "value": "总积分 = 积分 + 对象/3"},
-    ]
+    try:
+        checkin_msg = tree.xpath('//div[@class="bm signbtn cl"]/a/text()')[0]
+        stat = tree.xpath('//*[@id="wp"]/div[2]/div[2]/div[3]/div[2]/ul/li/text()')
+        msg += [{"name": s.split("：")[0], "value": s.split("：")[1]} for s in stat]
+    except Exception as e:
+        msg += [{"name": "查询对象失败", "value": e}]
+
+    # 积分信息
+    r = SESSION.get("https://bbs.yamibo.com/home.php?mod=spacecp&ac=credit")
+    soup = BeautifulSoup(r.text, "lxml")
+    tree = html.fromstring(str(soup))
+    try:
+        credit = tree.xpath('//ul[@class="creditl mtm bbda cl"]/li/text()')
+        data = [i.strip() for i in credit]
+        msg += [
+            {"name": "对象", "value": data[1]},
+            {"name": "积分", "value": data[2]},
+            {"name": "总积分", "value": data[3]},
+            {"name": "规则", "value": "总积分 = 积分 + 对象/3"}
+        ]
+    except Exception as e:
+        msg += [{"name": "查询积分失败", "value": e}]
 
 
 def main():
